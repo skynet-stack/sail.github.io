@@ -339,8 +339,18 @@ function downloadExcel() {
 
     // Write the workbook to file
     XLSX.writeFile(workbook, "attendance.xlsx");
-}
 
+    // Clear the local storage
+    localStorage.removeItem("attendanceData");
+
+    // Clear the table contents
+    const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
+    tableBody.innerHTML = "";
+
+    // Clear the export table contents
+    const exportTableBody = document.getElementById("export-table").getElementsByTagName("tbody")[0];
+    exportTableBody.innerHTML = "";
+}
 </script>
 </body>
-  </html> 
+                                       </html>

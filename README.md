@@ -8,6 +8,12 @@ This README outlines the terms of use and legal protections applicable to SAIL c
 
 ## Legal Notice
 
+This repository and its contents are protected under local and international laws, including the Intellectual Property Code of the Philippines (R.A. 8293). Unauthorized copying, distribution, or use of the code is strictly prohibited. Violators will be subject to prosecution and legal action, which may involve authorities such as the National Bureau of Investigation (NBI), Philippine National Police (PNP), and relevant international agencies.
+
+For more information, please refer to the LICENSE file.
+
+## Legal Notice
+
 **WARNING: This project README is protected by the laws of the Philippines and the United States of America, as well as international treaties. By accessing, using, or copying any part of this project, you agree to abide by the strict terms and conditions outlined in this notice. Unauthorized use, reproduction, distribution, or modification of this project without explicit permission from NetlabElectronics is strictly prohibited and will result in severe legal consequences.**
 
 ### Intellectual Property Rights

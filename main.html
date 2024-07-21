@@ -174,183 +174,175 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.3/dist/xlsx.full.min.js"></script>
     <script>
-        // Function to sort table rows by last name
-        function sortTableByLastName() {
-            const table = document.getElementById("export-table");
-            const rows = Array.from(table.rows).slice(1); // Skip the header row
+   // Function to sort table rows by last name
+function sortTableByLastName() {
+    const table = document.getElementById("export-table");
+    const rows = Array.from(table.rows).slice(1); // Skip the header row
 
-            rows.sort((a, b) => {
-                const aLastName = a.cells[0].textContent.split(" ")[0];
-                const bLastName = b.cells[0].textContent.split(" ")[0];
-                return aLastName.localeCompare(bLastName);
-            });
+    rows.sort((a, b) => {
+        const aLastName = a.cells[0].textContent.split(" ")[0];
+        const bLastName = b.cells[0].textContent.split(" ")[0];
+        return aLastName.localeCompare(bLastName);
+    });
 
-            rows.forEach(row => table.appendChild(row)); // Reattach sorted rows
-        }
+    rows.forEach(row => table.appendChild(row)); // Reattach sorted rows
+}
 
-        function domReady(fn) {
-            if (document.readyState === "complete" || document.readyState === "interactive") {
-                setTimeout(fn, 1000);
-            } else {
-                document.addEventListener("DOMContentLoaded", fn);
-            }
-        } 
-
-        function getQrboxSize() {
-            return 100; // Adjust this value to change the QR box size
-        }
-
-        domReady(function () {
-            const scannedQRs = new Map();
-            let scanEnabled = true;
-
-            function onScanSuccess(decodedText) {
-                if (!scanEnabled) return;
-                scanEnabled = false;
-
-                const now = new Date();
-                const time = now.toLocaleTimeString();
-                const date = now.toLocaleDateString();
-
-                if (!scannedQRs.has(decodedText)) {
-                    scannedQRs.set(decodedText, { timeIn: time, date: date, row: null });
-
-                    const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
-                    const newRow = tableBody.insertRow();
-
-                    const newCellQRData = newRow.insertCell(0);
-                    const newCellTimeIn = newRow.insertCell(1);
-                    const newCellTimeOut = newRow.insertCell(2);
-                    const newCellDate = newRow.insertCell(3);
-
-                    newCellQRData.textContent = decodedText;
-                    newCellTimeIn.textContent = time;
-                    newCellTimeOut.textContent = '';
-                    newCellDate.textContent = date;
-
-                    scannedQRs.get(decodedText).row = newRow;
-                } else {
-                    const qrData = scannedQRs.get(decodedText);
-                    if (qrData.row) {
-                        qrData.row.cells[2].textContent = time;
-                    }
-                    scannedQRs.delete(decodedText);
-                }
-
-                saveDataToLocalStorage();
-                setTimeout(() => {
-                    scanEnabled = true;
-                }, 5000); // 5000 milliseconds = 5 seconds
-            }
-
-            const htmlscanner = new Html5QrcodeScanner(
-                "my-qr-reader",
-                { 
-                    fps: 10, 
-                    qrbox: getQrboxSize(),
-                    rememberLastUsedCamera: true,
-                    facingMode: { exact: "environment" }
-                }
-            );
-            htmlscanner.render(onScanSuccess);
-
-            function saveDataToLocalStorage() {
-                const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
-                const rows = tableBody.getElementsByTagName("tr");
-
-                const data = [];
-                for (let row of rows) {
-                    const cells = row.getElementsByTagName("td");
-                    data.push({
-                        qrData: cells[0].textContent,
-                        timeIn: cells[1].textContent,
-                        timeOut: cells[2].textContent,
-                        date: cells[3].textContent
-                    });
-                }
-
-                localStorage.setItem("attendanceData", JSON.stringify(data));
-            }
-
-            function loadDataFromLocalStorage() {
-                const savedData = JSON.parse(localStorage.getItem("attendanceData") || "[]");
-                const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
-
-                savedData.forEach(data => {
-                    const newRow = tableBody.insertRow();
-                    newRow.insertCell(0).textContent = data.qrData;
-                    newRow.insertCell(1).textContent = data.timeIn;
-                    newRow.insertCell(2).textContent = data.timeOut;
-                    newRow.insertCell(3).textContent = data.date;
-                });
-            }
-
-            loadDataFromLocalStorage();
-        });
-
-        function openExportSection() {
-            document.getElementById("export-section").style.display = "block";
-        }
-
-        function validateAdmin() {
-    const adminPassword = "admin"; // Set your admin password here
-    const inputPassword = document.getElementById("admin-password").value;
-
-    if (inputPassword === adminPassword) {
-        loadExportData();
+function domReady(fn) {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        setTimeout(fn, 1000);
     } else {
-        alert("Incorrect password");
+        document.addEventListener("DOMContentLoaded", fn);
     }
 }
 
-function loadExportData() {
-    const savedData = JSON.parse(localStorage.getItem("attendanceData") || "[]");
-    const exportTableBody = document.getElementById("export-table").getElementsByTagName("tbody")[0];
-    exportTableBody.innerHTML = "";
-
-    savedData.forEach(data => {
-        const newRow = exportTableBody.insertRow();
-        newRow.insertCell(0).textContent = data.qrData;
-        newRow.insertCell(1).textContent = data.timeIn;
-        newRow.insertCell(2).textContent = data.timeOut;
-        newRow.insertCell(3).textContent = data.date;
-    });
+function getQrboxSize() {
+    return 100; // Adjust this value to change the QR box size
 }
+
+domReady(function () {
+    const scannedQRs = new Map();
+    let scanEnabled = true;
+
+    function onScanSuccess(decodedText) {
+        if (!scanEnabled) return;
+        scanEnabled = false;
+
+        const now = new Date();
+        const time = now.toLocaleTimeString();
+        const date = now.toLocaleDateString();
+
+        if (!scannedQRs.has(decodedText)) {
+            scannedQRs.set(decodedText, { timeIn: time, date: date, row: null });
+
+            const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
+            const newRow = tableBody.insertRow();
+
+            const newCellQRData = newRow.insertCell(0);
+            const newCellTimeIn = newRow.insertCell(1);
+            const newCellTimeOut = newRow.insertCell(2);
+            const newCellDate = newRow.insertCell(3);
+
+            newCellQRData.textContent = decodedText;
+            newCellTimeIn.textContent = time;
+            newCellTimeOut.textContent = '';
+            newCellDate.textContent = date;
+
+            scannedQRs.get(decodedText).row = newRow;
+        } else {
+            const qrData = scannedQRs.get(decodedText);
+            if (qrData.row) {
+                qrData.row.cells[2].textContent = time;
+            }
+            scannedQRs.delete(decodedText);
+        }
+
+        saveDataToLocalStorage();
+        setTimeout(() => {
+            scanEnabled = true;
+        }, 5000); // 5000 milliseconds = 5 seconds
+    }
+
+    const htmlscanner = new Html5QrcodeScanner(
+        "my-qr-reader",
+        { 
+            fps: 10, 
+            qrbox: getQrboxSize(),
+            rememberLastUsedCamera: true,
+            facingMode: { exact: "environment" }
+        }
+    );
+    htmlscanner.render(onScanSuccess);
+
+    function saveDataToLocalStorage() {
+        const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
+        const rows = tableBody.getElementsByTagName("tr");
+
+        const data = [];
+        for (let row of rows) {
+            const cells = row.getElementsByTagName("td");
+            data.push({
+                qrData: cells[0].textContent,
+                timeIn: cells[1].textContent,
+                timeOut: cells[2].textContent,
+                date: cells[3].textContent
+            });
+        }
+
+        localStorage.setItem("attendanceData", JSON.stringify(data));
+    }
+
+    function loadDataFromLocalStorage() {
+        const data = JSON.parse(localStorage.getItem("attendanceData")) || [];
+
+        const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
+        tableBody.innerHTML = '';
+
+        data.forEach(item => {
+            const newRow = tableBody.insertRow();
+
+            const newCellQRData = newRow.insertCell(0);
+            const newCellTimeIn = newRow.insertCell(1);
+            const newCellTimeOut = newRow.insertCell(2);
+            const newCellDate = newRow.insertCell(3);
+
+            newCellQRData.textContent = item.qrData;
+            newCellTimeIn.textContent = item.timeIn;
+            newCellTimeOut.textContent = item.timeOut;
+            newCellDate.textContent = item.date;
+        });
+    }
+
+    loadDataFromLocalStorage();
+});
+
+// Function to handle export button click
+function openExportSection() {
+    const password = prompt('Enter password to access export section:');
+    if (password === 'admin123') { // Replace with your actual password validation
+        const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
+        const exportTableBody = document.getElementById("export-table").getElementsByTagName("tbody")[0];
+        
+        // Clear previous export section data
+        exportTableBody.innerHTML = '';
+
+        // Copy data from result table to export table
+        Array.from(tableBody.rows).forEach(row => {
+            const newRow = exportTableBody.insertRow();
+            Array.from(row.cells).forEach(cell => {
+                const newCell = newRow.insertCell();
+                newCell.textContent = cell.textContent;
+            });
+        });
+
+        document.getElementById('export-section').style.display = 'block';
+    } else {
+        alert('Invalid password');
+    }
+}
+
 function downloadExcel() {
-    const data = JSON.parse(localStorage.getItem("attendanceData") || "[]");
+    const exportTable = document.getElementById("export-table");
+    const rows = Array.from(exportTable.rows).slice(1); // Skip header row
 
-    // Define custom headers
-    const headers = ["Student Name", "Time In", "Time Out", "Date"];
-
-    // Add headers to data
-    const formattedData = data.map(entry => ({
-        "Student Name": entry.qrData,
-        "Time In": entry.timeIn,
-        "Time Out": entry.timeOut,
-        "Date": entry.date
+    const data = rows.map(row => ({
+        "Student Name": row.cells[0].textContent,
+        "Time In": row.cells[1].textContent,
+        "Time Out": row.cells[2].textContent,
+        "Date": row.cells[3].textContent
     }));
 
-    // Create worksheet
-    const worksheet = XLSX.utils.json_to_sheet(formattedData, { header: headers });
-
-    // Create workbook and append the worksheet
+    const worksheet = XLSX.utils.json_to_sheet(data, { header: ["Student Name", "Time In", "Time Out", "Date"] });
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
-
-    // Write the workbook to file
     XLSX.writeFile(workbook, "attendance.xlsx");
-
-    // Clear the local storage
+    
+    // Clear the local storage and table contents after download
     localStorage.removeItem("attendanceData");
-
-    // Clear the table contents
-    const tableBody = document.getElementById("result-table").getElementsByTagName("tbody")[0];
-    tableBody.innerHTML = "";
-
-    // Clear the export table contents
-    const exportTableBody = document.getElementById("export-table").getElementsByTagName("tbody")[0];
-    exportTableBody.innerHTML = "";
+    document.getElementById("result-table").getElementsByTagName("tbody")[0].innerHTML = "";
+    document.getElementById("export-table").getElementsByTagName("tbody")[0].innerHTML = "";
+    document.getElementById('export-section').style.display = 'none';
 }
 </script>
 </body>
-                                       </html>
+    </html>
